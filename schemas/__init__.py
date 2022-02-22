@@ -1,1 +1,1 @@
-from schemas.post_schemas import FullPostSchema
+from schemas.post_schemas import FullPostSchema, WithoutIdPostSchema

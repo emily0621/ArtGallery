@@ -15,9 +15,6 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 api = Api(app)
 
-engine = create_engine('mysql://root:1234@localhost:3306/testdb', convert_unicode=True)
-session = scoped_session(sessionmaker(autocommit=False, autoflush=False, bind=engine))
-
 import routes
 
 
