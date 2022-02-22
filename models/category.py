@@ -9,3 +9,8 @@ class Category(Base):
     id = Column(Integer, primary_key=True, autoincrement=True)
     category_name = Column(String(25), nullable=False)
     category = Column(ForeignKey("category.id"))
+
+    def __init__(self, category_name, category):
+        self.category_name = category_name
+        self.category = category
+

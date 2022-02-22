@@ -13,4 +13,11 @@ class Viewer(Base):
     avatar_link = Column(String(256))
     date_of_birth = Column(Date, nullable=False)
 
+    def __init__(self, username, email, password, avatar_link, date_of_birth):
+        self.username = username
+        self.email = email
+        self.password = password
+        self.avatar_link = avatar_link
+        self.date_of_birth = date_of_birth
+
 
