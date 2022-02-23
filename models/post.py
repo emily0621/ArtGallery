@@ -1,6 +1,10 @@
 from models.base import Base
 from models.author import Author
 from models.viewer import Viewer
+from models.likes import Likes
+from models.comments import Comments
+from models.post_has_tag import PostHasTag
+from models.category import Category
 from sqlalchemy import Column, Integer, String, ForeignKey
 
 from app import db
@@ -25,8 +29,45 @@ class Post(Base):
         self.author = author
         self.likes = 0
 
-    def addPost(self):
-        db.session.add(self)
+    @staticmethod
+    def addPost(title, text, category, url, author):
+        if len(title) > 25:
+            return 'Long title'
+        if len(text) > 1000:
+            return 'Long text'
+        if Category.getCategoryById(category) is None:
+            return 'Category doesn`t exists'
+        post = Post(
+            title=title,
+            text=text,
+            category=category,
+            url=url,
+            author=author
+        )
+        db.session.add(post)
+        db.session.commit()
+        return post
+
+    def setTitle(self, title):
+        if len(title) > 25:
+            return False
+        self.title = title
+        return True
+
+    def setText(self, text):
+        if len(text) > 1000:
+            return False
+        self.text = text
+        return True
+
+    def setCategory(self, category):
+        if Category.getCategoryById(category) is None:
+            return False
+        self.category = category
+        return True
+
+    @staticmethod
+    def commit():
         db.session.commit()
 
     @classmethod
@@ -35,7 +76,22 @@ class Post(Base):
 
     @classmethod
     def getAllPostsByAuthor(cls, username):
-        return db.session.query(cls)\
-            .filter(cls.author == db.session.query(Author.id)
-                    .filter(Author.viewer_id == db.session.query(Viewer.id)
-                            .filter(Viewer.username == username).scalar_subquery()).scalar_subquery())
+        author = Author.getAuthorByUsername(username)
+        if not author:
+            return False
+        return db.session.query(cls).filter(cls.author == author.id)
+
+    @classmethod
+    def getPostById(cls, id_post):
+        return db.session.query(cls).filter(cls.id == id_post).first()
+
+    @classmethod
+    def deletePostById(cls, id_post):
+        if not cls.getPostById(id_post):
+            return False
+        Likes.deleteLikeByPostId(id_post)
+        Comments.deleteCommentByPostId(id_post)
+        PostHasTag.deletePostHasTagByPostId(id_post)
+        db.session.delete(db.session.query(cls).filter(cls.id == id_post).first())
+        db.session.commit()
+        return True

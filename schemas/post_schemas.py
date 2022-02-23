@@ -18,3 +18,18 @@ class WithoutIdPostSchema(Schema):
     category = fields.Integer()
     url = fields.String()
     author = fields.Integer()
+
+
+class EditPostSchema:
+    title = fields.String()
+    text = fields.String()
+    category = fields.Integer()
+    url = fields.String()
+
+
+class AddPostSchema:
+    title = fields.String()
+    text = fields.String()
+    category = fields.Integer()
+    url = fields.String()
+    author = fields.Integer()

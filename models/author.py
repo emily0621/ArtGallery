@@ -1,7 +1,8 @@
 from models.base import Base
+from models.viewer import Viewer
 
 from sqlalchemy import Column, Integer, String, ForeignKey
-
+from app import db
 
 class Author(Base):
 
@@ -23,3 +24,13 @@ class Author(Base):
         self.viewer_id = viewer_id
         self.country = country
         self.city = city
+
+    @classmethod
+    def getAuthorByUsername(cls, username):
+        viewer = Viewer.getViewerByUsername(username)
+        if not viewer:
+            return False
+        author = db.session.query(cls).filter(cls.viewer_id == viewer.id).first()
+        if not author:
+            return False
+        return author

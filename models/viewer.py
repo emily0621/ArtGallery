@@ -1,6 +1,7 @@
 from models.base import Base
 
 from sqlalchemy import Column, Integer, String, Date
+from app import db
 
 
 class Viewer(Base):
@@ -20,4 +21,9 @@ class Viewer(Base):
         self.avatar_link = avatar_link
         self.date_of_birth = date_of_birth
 
-
+    @classmethod
+    def getViewerByUsername(cls, username):
+        viewer = db.session.query(cls).filter(cls.username == username).first()
+        if not viewer:
+            return False
+        return viewer
